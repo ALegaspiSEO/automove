@@ -5,94 +5,236 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoMove - Car Shipping Guide in the USA</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            color: #333;
+            color: #111;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            font-size: clamp(14px, 2.5vw, 16px);
+            position: relative;
         }
         header {
-            background-color: #2c3e50;
+            background: linear-gradient(to right, #3498db, #2c3e50);
             color: white;
             text-align: center;
-            padding: 2rem;
+            padding: clamp(1.2rem, 3.5vw, 2.2rem);
             width: 100%;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
-        header h1 {
+        .header-title {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4.5vw, 2.8rem);
+            color: white;
         }
         .main-content {
             display: flex;
             flex-grow: 1;
+            flex-direction: row;
+            width: 100%; /* Ensure full width */
         }
         .sidebar {
-            width: 300px; /* Increased width for less compression */
-            background-color: #34495e;
-            padding: 1.5rem;
+            width: 30%; /* Fixed 30% width */
+            background-color: #2c3e50;
+            padding: clamp(1.5rem, 3vw, 2rem);
             position: sticky;
-            top: 132px; /* Adjusted to account for header height */
-            height: calc(100vh - 132px - 60px); /* Subtract header and footer height */
+            top: clamp(90px, 12vw, 110px);
+            height: calc(100vh - clamp(90px, 12vw, 110px));
             overflow-y: auto;
-            z-index: 900; /* Ensure sidebar stays below header */
+            z-index: 900;
         }
         .sidebar a {
             color: white;
             display: block;
-            margin: 1rem 0; /* Increased spacing for better readability */
+            margin: clamp(0.8rem, 2vw, 1.2rem) 0;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.1rem; /* Slightly larger font for clarity */
+            font-size: clamp(1rem, 2.2vw, 1.2rem);
+            padding: 0.6rem 1rem;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .sidebar a:hover {
             text-decoration: underline;
+            color: #3498db;
         }
         .container {
-            max-width: calc(100% - 340px); /* Adjust main content width to account for wider sidebar */
-            margin-left: 340px; /* Match sidebar width + padding */
-            padding: 2rem;
+            width: 70%; /* Fixed 70% width */
+            padding: clamp(1.5rem, 3.5vw, 2.5rem) clamp(2.5rem, 5vw, 3.5rem);
             flex-grow: 1;
         }
-        h2 {
-            color: #2c3e50;
+        h1 {
+            color: #111;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5rem;
+            padding-bottom: clamp(0.4rem, 1.2vw, 0.6rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.2rem);
+        }
+        h2 {
+            color: #111;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: clamp(0.4rem, 1.2vw, 0.6rem);
+            font-size: clamp(1.5rem, 3vw, 2rem);
         }
         h3 {
-            color: #34495e;
-            margin-top: 1.5rem;
+            color: #111;
+            margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-size: clamp(1.3rem, 2.8vw, 1.8rem);
         }
         p, li {
-            margin-bottom: 1rem;
+            margin-bottom: clamp(1rem, 2.5vw, 1.2rem);
+            color: #111;
         }
         ul {
             list-style-type: disc;
-            margin-left: 2rem;
+            margin-left: clamp(1.8rem, 3.5vw, 2.2rem);
         }
         .section {
-            margin-bottom: 2rem;
+            margin-bottom: clamp(2rem, 4vw, 2.5rem);
+            scroll-margin-top: clamp(100px, 15vw, 130px);
         }
         footer {
-            background-color: #2c3e50;
+            background: linear-gradient(to right, #3498db, #2c3e50);
             color: white;
             text-align: center;
-            padding: 1rem;
+            padding: clamp(1rem, 2.5vw, 1.2rem);
             width: 100%;
             margin-top: auto;
+        }
+        footer p {
+            color: white;
+            margin: 0;
+        }
+        .hidden {
+            display: none;
+        }
+        button.filter-btn {
+            padding: 0.6rem 1.2rem;
+            margin: 0.5rem 0.3rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        button.filter-btn:hover {
+            background-color: #2c3e50;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .popup {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: clamp(300px, 35vw, 400px);
+            height: 100%;
+            background-color: #f9f9f9;
+            border-left: 2px solid #3498db;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+            padding: clamp(1.5rem, 3vw, 2rem);
+            overflow-y: auto;
+            z-index: 2000;
+            transition: right 0.3s ease-in-out;
+        }
+        .popup.open {
+            right: 0;
+        }
+        .popup h2, .popup h3 {
+            border-bottom: none;
+            padding-bottom: 0;
+            color: #111;
+        }
+        .close-btn {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #3498db;
+            transition: color 0.3s ease;
+        }
+        .close-btn:hover {
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            body {
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .main-content {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%; /* Full width on mobile */
+                position: static;
+                height: auto;
+                padding: clamp(1rem, 2.5vw, 1.2rem);
+            }
+            .sidebar a {
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+                padding: 0.5rem;
+            }
+            .container {
+                width: 100%; /* Full width on mobile */
+                padding: clamp(1rem, 3vw, 1.8rem);
+            }
+            .section {
+                scroll-margin-top: clamp(60px, 10vw, 80px);
+            }
+            .popup {
+                width: clamp(60%, 50vw, 70%);
+            }
+            button.filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: clamp(0.9rem, 2vw, 1rem);
+            }
+        }
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: clamp(1.6rem, 5vw, 2.2rem);
+            }
+            .sidebar a {
+                font-size: clamp(0.85rem, 2.8vw, 1rem);
+                padding: 0.4rem;
+            }
+            h1 {
+                font-size: clamp(1.4rem, 4vw, 1.8rem);
+            }
+            h2 {
+                font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+            }
+            h3 {
+                font-size: clamp(1.1rem, 3.2vw, 1.4rem);
+            }
+            .popup {
+                width: clamp(80%, 70vw, 90%);
+                padding: clamp(1rem, 2.5vw, 1.5rem);
+            }
+            button.filter-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>AutoMove</h1>
-        <p>Car Shipping Guide in the USA</p>
+        <span class="header-title">AutoMove</span>
     </header>
     <div class="main-content">
         <nav class="sidebar">
@@ -110,137 +252,813 @@
         </nav>
         <div class="container">
             <div class="section" id="introduction">
-                <h2>Introduction</h2>
-                <p>Shipping a car across the USA can be a convenient solution for relocating, selling, or purchasing a vehicle. Whether you're moving cross-country or buying a car from another state, understanding the car shipping process ensures a smooth experience. This guide provides a comprehensive overview of car shipping, covering types of services, costs, preparation, and tips to make the process hassle-free.</p>
+                <h1>Car Shipping Guide in the USA</h1>
+                <p>Transporting your vehicle across the vast expanse of the United States is an increasingly popular and practical choice for a variety of scenarios, including relocation to a new state, facilitating vehicle sales across regions, or acquiring a car from a distant location. Whether you’re moving from New York to California, purchasing a vintage car from a collector in Texas, or sending a vehicle to a family member in Florida, understanding the intricate details of the shipping process is essential to ensure a seamless, stress-free experience that meets your specific needs and preferences. AutoMove stands out as a premier provider, delivering reliable, cost-effective solutions with an unwavering commitment to customer satisfaction, transparency in pricing, and exceptional service quality. Our services are tailored to accommodate diverse needs, from budget-conscious shippers to owners of high-value vehicles requiring specialized care. This comprehensive guide is designed to walk you through every aspect of the journey, from exploring the diverse types of car shipping services available, to understanding the complex factors that influence costs, the detailed steps required for proper preparation, and a wealth of practical tips to guarantee a worry-free transportation process. Whether you're a first-time shipper navigating the logistics for the first time or a seasoned traveler managing multiple moves, this resource will equip you with the knowledge to make informed decisions and ensure your vehicle arrives safely and on schedule at its destination.</p>
+                <button class="filter-btn intro-filter" onclick="filterContent('intro-filter')">Explore Options</button>
             </div>
             <div class="section" id="services">
                 <h2>Types of Car Shipping Services</h2>
-                <h3>Open Transport</h3>
-                <p>Open transport involves shipping vehicles on an open trailer, exposed to the elements. It’s the most common and cost-effective option.</p>
-                <ul>
-                    <li><strong>Pros:</strong> Affordable, widely available, suitable for standard vehicles.</li>
-                    <li><strong>Cons:</strong> Exposure to weather, road debris, and potential minor scratches.</li>
-                </ul>
-                <h3>Enclosed Transport</h3>
-                <p>Enclosed transport uses a covered trailer, offering protection from weather and debris. It’s ideal for luxury, classic, or high-value cars.</p>
-                <ul>
-                    <li><strong>Pros:</strong> Enhanced protection, secure environment, less risk of damage.</li>
-                    <li><strong>Cons:</strong> Higher cost, less frequent availability.</li>
-                </ul>
-                <h3>Door-to-Door vs. Terminal-to-Terminal Shipping</h3>
-                <p><strong>Door-to-Door:</strong> The carrier picks up and delivers the vehicle as close as possible to your specified locations.</p>
-                <ul>
-                    <li><strong>Advantages:</strong> Convenient, time-saving, personalized service.</li>
-                    <li><strong>Disadvantages:</strong> More expensive, may not be available in remote areas.</li>
-                </ul>
-                <p><strong>Terminal-to-Terminal:</strong> You drop off and pick up the vehicle at designated terminals.</p>
-                <ul>
-                    <li><strong>Advantages:</strong> Cheaper, more flexible scheduling.</li>
-                    <li><strong>Disadvantages:</strong> Less convenient, requires transportation to/from terminals.</li>
-                </ul>
+                <div class="service open-transport">
+                    <h3>Open Transport</h3>
+                    <p>Open transport is a widely utilized and highly efficient method that employs open-air trailers to ship vehicles across the country, establishing itself as the most budget-friendly and readily available option for the average car owner seeking an economical solution. This approach allows your car to be securely loaded alongside other vehicles, often in a multi-level configuration, making it an ideal choice for everyday automobiles such as sedans, SUVs, pickup trucks, and other standard models that don’t require specialized handling or protection. For example, a family moving from Chicago to Atlanta might choose open transport for their Honda Accord, benefiting from lower costs and faster scheduling. The exposure to the elements, however, is a notable trade-off, as your vehicle may encounter various weather conditions like rain, snow, or intense sunlight, as well as minor road debris such as gravel, dust, or small pebbles during transit, which is a consideration for less durable or moderately valuable cars that can withstand such exposure. Carriers use heavy-duty straps and secure loading techniques to minimize risks, but owners should be aware of potential minor cosmetic wear.</p>
+                    <ul>
+                        <li><strong>Benefits:</strong> Highly cost-effective with significantly lower rates compared to enclosed options, offers faster scheduling due to the high availability of open trailers across the nation, and is perfectly suited for standard cars that don’t need premium protection, making it accessible for a wide range of budgets.</li>
+                        <li><strong>Drawbacks:</strong> Vehicles are fully exposed to weather conditions like rain, snow, or extreme heat, susceptible to minor road debris such as gravel or dust that may cause surface scratches, and offer less privacy or security compared to enclosed options, which could be a concern in high-traffic areas.</li>
+                        <li><strong>Best For:</strong> Budget-conscious shippers, owners of standard vehicles, and those prioritizing speed over premium protection.</li>
+                    </ul>
+                    <button class="filter-btn open-filter" onclick="filterContent('open-filter')">Learn Open Transport</button>
+                </div>
+                <div class="service enclosed-transport">
+                    <h3>Enclosed Transport</h3>
+                    <p>Enclosed transport provides a superior level of protection by utilizing fully covered trailers that shield your vehicle from external elements, making it the preferred choice for owners of luxury, classic, or high-value cars requiring meticulous care and preservation. This premium service ensures your automobile is safeguarded against weather-related damage such as hail or heavy rain, road debris like gravel or salt, and potential theft or vandalism, offering unparalleled peace of mind for irreplaceable vehicles with significant emotional or monetary value. For instance, a collector shipping a 1965 Mustang from Los Angeles to New York would opt for enclosed transport to protect its pristine condition. However, the limited capacity of enclosed trailers, which can only accommodate a smaller number of cars per trip, results in higher costs and potentially longer wait times due to reduced availability and the specialized nature of the equipment required. Carriers often use padded interiors and climate controls to further protect these vehicles.</p>
+                    <ul>
+                        <li><strong>Benefits:</strong> Offers maximum protection against rain, snow, intense sunlight, and debris, ensures enhanced security from theft or vandalism with locked trailers, and is ideal for valuable vehicles like sports cars, antiques, or restored classics that demand extra care.</li>
+                        <li><strong>Drawbacks:</strong> Significantly higher cost due to specialized equipment and limited space, limited availability that may delay scheduling by weeks, and less flexibility for last-minute bookings, requiring advance planning.</li>
+                        <li><strong>Best For:</strong> Owners of luxury or classic cars, vehicles with high monetary or sentimental value, and those prioritizing protection over cost.</li>
+                    </ul>
+                    <button class="filter-btn enclosed-filter" onclick="filterContent('enclosed-filter')">Learn Enclosed Transport</button>
+                </div>
+                <div class="service door-to-door">
+                    <h3>Door-to-Door Shipping</h3>
+                    <p>Door-to-door shipping elevates convenience to a new level by allowing carriers to pick up your vehicle directly from your specified location, such as your home, office, or a dealership, and deliver it to your chosen destination, such as a new residence or another specified address, minimizing the effort and logistical burden required on your part. This service is particularly advantageous for individuals relocating to new cities, such as a professional moving from Seattle to Miami, those with limited access to transportation hubs, or anyone seeking a hands-off experience. However, it may face challenges in remote or rural areas where large trailers struggle to navigate narrow roads, tight spaces, or unpaved driveways, potentially requiring alternative arrangements like meeting the carrier at a nearby accessible location. Carriers often coordinate with you to ensure smooth access and delivery.</p>
+                    <ul>
+                        <li><strong>Benefits:</strong> Eliminates the need for you to transport your car to a terminal, saving valuable time with personalized scheduling tailored to your availability, and provides a highly customized service that adapts to your specific needs and locations.</li>
+                        <li><strong>Drawbacks:</strong> More expensive due to the individualized attention and routing, may be limited in remote areas with poor road access or steep inclines, and could require coordination with the carrier for large vehicle delivery in constrained spaces.</li>
+                        <li><strong>Best For:</strong> Busy individuals, those in urban or suburban areas, and customers prioritizing convenience.</li>
+                    </ul>
+                    <button class="filter-btn door-filter" onclick="filterContent('door-filter')">Learn Door-to-Door</button>
+                </div>
+                <div class="service terminal-to-terminal">
+                    <h3>Terminal-to-Terminal Shipping</h3>
+                    <p>Terminal-to-terminal shipping offers a more affordable and structured alternative by requiring you to drop off your vehicle at a designated transport hub, such as a warehouse or shipping facility in a major city like Denver or Houston, and pick it up at a corresponding location near your destination, providing a budget-friendly option for cost-conscious individuals. This method is highly cost-effective and provides flexible scheduling options with multiple terminal locations across the country, though it demands additional planning and travel on your part to reach the terminals, which may not always be conveniently located near your home or final destination. For example, a student moving to a new college campus might use this option to save money, arranging transport to a nearby terminal.</p>
+                    <ul>
+                        <li><strong>Benefits:</strong> Significantly lower cost compared to door-to-door, offers flexible scheduling with multiple terminal options to choose from, and is suitable for those willing to handle their own logistics and travel arrangements.</li>
+                        <li><strong>Drawbacks:</strong> Requires you to arrange reliable transportation to and from terminals, less convenient for those in remote locations far from hubs, and may involve wait times at busy terminals during peak seasons.</li>
+                        <li><strong>Best For:</strong> Budget-conscious shippers, those near major transport hubs, and customers comfortable with logistical planning.</li>
+                    </ul>
+                    <button class="filter-btn terminal-filter" onclick="filterContent('terminal-filter')">Learn Terminal-to-Terminal</button>
+                </div>
             </div>
             <div class="section" id="costs">
                 <h2>Factors Affecting Car Shipping Costs</h2>
-                <p>Several factors influence the cost of shipping a car:</p>
-                <ul>
-                    <li><strong>Distance and Route:</strong> Longer distances or rural routes increase costs due to fuel and time.</li>
-                    <li><strong>Vehicle Size and Weight:</strong> Larger or heavier vehicles (e.g., SUVs, trucks) cost more than compact cars.</li>
-                    <li><strong>Transport Type:</strong> Enclosed transport is pricier than open transport.</li>
-                    <li><strong>Seasonality and Demand:</strong> Prices may rise during peak seasons (e.g., summer) or high-demand periods.</li>
-                    <li><strong>Additional Services:</strong> Expedited shipping or extra insurance adds to the cost.</li>
-                </ul>
+                <p>Costs for shipping your vehicle across the expansive USA can vary widely based on several key factors, including the total distance traveled, the type, size, and weight of your vehicle, the specific service selected from the available options, and seasonal demand fluctuations that can significantly impact availability and pricing structures. For instance, shipping a compact car from Boston to Dallas will differ in cost from shipping a large SUV across the same route due to space and weight considerations. Understanding these elements is crucial for budgeting effectively and avoiding unexpected expenses, as AutoMove strives to offer transparent pricing with no hidden fees or surprise charges, ensuring you receive a fair and competitive quote tailored to your unique needs and circumstances. Options range from budget-friendly choices designed for cost savings to premium services offering enhanced protection, allowing you to find the best fit for your financial situation, vehicle requirements, and personal preferences. Additional factors like fuel prices, route complexity, and time of year (e.g., summer peak or winter off-season) can further influence costs, making early planning essential.</p>
+                <button class="filter-btn cost-filter" onclick="filterContent('cost-filter')">Cost Breakdown</button>
+                <div class="cost open-transport">
+                    <h3>Standard Vehicle Pricing</h3>
+                    <p>For open transport, costs are typically lower due to the ability to ship multiple vehicles on a single open-air trailer, making it an economical choice for standard cars and light trucks. Expect prices to range between $500 and $1,000 for distances of 500 to 1,500 miles, a common range for regional moves like Miami to Atlanta, while cross-country routes spanning 2,000 miles or more, such as Los Angeles to New York, may cost between $1,000 and $1,500 depending on the route complexity. Additional factors such as the size of your vehicle (e.g., a compact car versus a full-sized pickup), current fuel prices that affect carrier overhead, and peak shipping seasons like summer or holiday periods can influence the final price, so planning ahead and booking early—ideally 2-4 weeks in advance—can help you secure the best possible rates and avoid last-minute surcharges. Requesting top-load placement may also slightly increase costs but reduces exposure to debris.</p>
+                </div>
+                <div class="cost enclosed-transport">
+                    <h3>Premium Vehicle Pricing</h3>
+                    <p>Enclosed transport is considerably pricier, ranging from $1,200 to $2,000, reflecting the premium protection and limited trailer capacity that accommodates fewer vehicles per trip, often just one or two high-value cars. This cost increases for larger vehicles like full-sized trucks or vans, longer routes exceeding 2,000 miles that require extended travel time, such as Seattle to Miami, and during high-demand periods such as holidays, auto show seasons, or relocation booms in spring and summer. For example, shipping a Porsche 911 cross-country might cost closer to $2,000 due to its value and specialized handling needs. Seasonal fluctuations can also impact availability, potentially requiring you to book well in advance—sometimes 6-8 weeks ahead—to lock in a competitive rate for your luxury sedan, classic convertible, or other valuable automobile. Carriers may also offer premium services like climate control, adding to the cost but enhancing protection.</p>
+                </div>
+                <div class="cost door-to-door">
+                    <h3>Convenience Pricing</h3>
+                    <p>Door-to-door shipping adds a significant layer of convenience but increases costs by $100 to $300 compared to terminal-to-terminal options, depending on the accessibility of your pickup and delivery locations and the complexity of the route. Urban areas with well-maintained roads and ample space, like downtown Chicago, tend to be cheaper and more straightforward, while remote regions with challenging terrain, narrow streets, or limited access, such as rural Montana, may push prices higher due to the need for specialized handling or smaller transport vehicles. The distance traveled, the need for customized scheduling to align with your availability, and potential fuel surcharges also contribute to the overall expense, making it a premium choice for those who prioritize ease and direct service over cost savings.</p>
+                </div>
+                <div class="cost terminal-to-terminal">
+                    <h3>Budget Pricing</h3>
+                    <p>Terminal-to-terminal shipping is the most cost-effective option, saving up to $200 compared to door-to-door services by relying on established transport hubs that streamline operations. Prices align closely with open transport rates, typically ranging from $400 to $1,200 depending on the distance and the terminal network utilized, such as hubs in Dallas or Philadelphia. For example, shipping a sedan from a terminal in Phoenix to one in Charlotte might cost $600-$900. This method is ideal for budget-conscious shippers who can plan their logistics, are located near major transportation centers, and are willing to invest time in coordinating their travel to and from the terminals. Costs may vary based on terminal storage fees or peak-season demand, so confirm details with the carrier upfront.</p>
+                </div>
             </div>
             <div class="section" id="choosing">
                 <h2>How to Choose a Car Shipping Company</h2>
-                <p>Selecting a reliable car shipping company is critical for a successful experience:</p>
-                <ul>
-                    <li><strong>Research Reputable Companies:</strong> Look for established companies with a strong track record.</li>
-                    <li><strong>Check Licensing and Insurance:</strong> Ensure the company has a valid USDOT number and adequate insurance.</li>
-                    <li><strong>Read Customer Reviews:</strong> Check platforms like Better Business Bureau or Transport Reviews for feedback.</li>
-                    <li><strong>Compare Quotes:</strong> Request quotes from multiple companies, but beware of unusually low offers that may indicate scams.</li>
-                    <li><strong>Verify Carrier Credentials:</strong> Confirm the carrier’s Motor Carrier (MC) number and compliance with federal regulations.</li>
-                </ul>
+                <div class="choose open-transport">
+                    <h3>For Standard Vehicles</h3>
+                    <p>For open transport, prioritize companies with a strong track record in handling standard vehicles, ensuring they have years of experience, a robust fleet of open trailers, and a reputation for reliability across various routes, from short regional moves to cross-country hauls. Look for transparency in pricing with no hidden fees, upfront deposits, or unexpected surcharges, and check high customer ratings on platforms like the Better Business Bureau (BBB), Trustpilot, or Google Reviews to gauge satisfaction and reliability. For instance, a company with a 4.8-star rating and thousands of reviews is likely a safer bet than one with limited feedback. This diligence helps you select a provider that aligns with your needs for cost-effective, dependable service, especially for common vehicles like sedans, SUVs, or minivans that don’t require specialized care.</p>
+                    <ul>
+                        <li>Check USDOT licensing and insurance for legal compliance and protection against damages.</li>
+                        <li>Compare multiple quotes from at least three carriers to secure competitive rates and avoid overpaying.</li>
+                        <li>Ensure carriers are vetted for reliability with a history of on-time deliveries and positive feedback from previous customers.</li>
+                    </ul>
+                    <button class="filter-btn standard-choice" onclick="filterContent('standard-choice')">Choose Standard</button>
+                </div>
+                <div class="choose enclosed-transport">
+                    <h3>For Luxury Vehicles</h3>
+                    <p>For enclosed transport, select companies with specialized expertise in handling high-value vehicles, such as classic cars, luxury sedans, or exotic models like Ferraris or Lamborghinis, to ensure proper care and attention to detail. Verify their experience through detailed customer testimonials, case studies of similar shipments, confirm comprehensive insurance coverage that protects against damage, loss, or theft, and look for additional services like climate-controlled trailers or GPS tracking for added security during long-distance moves across state lines. For example, a carrier with a history of successfully transporting vintage Corvettes to auto shows is ideal. Check for certifications or affiliations with professional organizations like the Auto Transport Association for added credibility.</p>
+                    <ul>
+                        <li>Look for specialized enclosed carriers with proven expertise in luxury handling and certifications.</li>
+                        <li>Check for high ratings and detailed customer testimonials from clients with similar high-value vehicles.</li>
+                        <li>Ensure additional protection plans, such as gap insurance, are offered for peace of mind and full coverage.</li>
+                    </ul>
+                    <button class="filter-btn luxury-choice" onclick="filterContent('luxury-choice')">Choose Luxury</button>
+                </div>
+                <div class="choose door-to-door">
+                    <h3>For Convenience</h3>
+                    <p>For door-to-door shipping, choose companies offering flexible scheduling to accommodate your timeline, clear communication through regular updates via phone, email, or mobile apps, and a customer-centric approach with dedicated support staff. Confirm their ability to service your specific locations, especially in less accessible areas like suburban cul-de-sacs or gated communities, by reviewing their route coverage, past delivery success in similar regions, and customer feedback to ensure a smooth, hassle-free experience tailored to your convenience and specific logistical needs. A carrier with a 24/7 support line and positive reviews for punctuality is a strong choice.</p>
+                    <ul>
+                        <li>Verify carrier availability in your area with detailed route and access information for both pickup and delivery.</li>
+                        <li>Check for no upfront payment policies to reduce financial risk and build trust with the carrier.</li>
+                        <li>Read reviews for punctuality, service quality, responsiveness, and problem-solving skills to ensure reliability.</li>
+                    </ul>
+                    <button class="filter-btn convenience-choice" onclick="filterContent('convenience-choice')">Choose Convenience</button>
+                </div>
+                <div class="choose terminal-to-terminal">
+                    <h3>For Budget Options</h3>
+                    <p>For terminal-to-terminal shipping, focus on companies with an extensive network of accessible terminals across multiple states and reliable scheduling to minimize delays or missed connections at busy hubs. Ensure they provide clear instructions for drop-off and pickup procedures, including terminal hours, contact information, and parking details, offer cost transparency with no surprise fees or hidden costs, and maintain high customer satisfaction ratings to support a budget-friendly yet efficient and trustworthy shipping process. For example, a company with terminals in major cities like Phoenix and Boston, and clear online instructions, is ideal for cost-conscious shippers.</p>
+                    <ul>
+                        <li>Confirm terminal locations, hours, proximity, and accessibility to your area to plan logistics.</li>
+                        <li>Check for cost transparency and no hidden fees in detailed contracts to avoid surprises.</li>
+                        <li>Look for high customer satisfaction ratings for reliability, terminal efficiency, and service consistency.</li>
+                    </ul>
+                    <button class="filter-btn budget-choice" onclick="filterContent('budget-choice')">Choose Budget</button>
+                </div>
             </div>
             <div class="section" id="preparation">
                 <h2>Preparing Your Car for Shipping</h2>
-                <p>Proper preparation minimizes risks and ensures a smooth process:</p>
-                <ul>
-                    <li><strong>Clean the Vehicle:</strong> Wash the exterior and clean the interior to make inspection easier.</li>
-                    <li><strong>Document Existing Damage:</strong> Take photos of the car’s condition to record any pre-existing dents or scratches.</li>
-                    <li><strong>Remove Personal Items:</strong> Clear out all personal belongings, as they’re not covered by insurance.</li>
-                    <li><strong>Mechanical Preparation:</strong> Check fluid levels, tire pressure, and battery charge; keep the gas tank at 1/4 full.</li>
-                    <li><strong>Disable Alarms and Secure Parts:</strong> Turn off alarms and secure or remove loose parts like spoilers or antennas.</li>
-                </ul>
+                <div class="prep open-transport">
+                    <h3>For Open Transport</h3>
+                    <p>For open transport, clean your vehicle thoroughly both inside and out to spot any existing damage during the pre-shipment inspection, which is critical for accurate documentation and potential claims. A clean car makes it easier to identify scratches or dents under bright lighting. Remove all personal items from the car, including loose items in the trunk, glove compartment, or under seats, as they are not covered by insurance and could be lost, damaged, or cause safety issues during transit. Keep the fuel tank at about a quarter full to meet safety regulations, reduce weight for the carrier, and comply with loading standards, as excess fuel adds unnecessary weight and cost. For example, a family shipping a minivan should ensure toys, electronics, and other personal items are removed to avoid complications.</p>
+                    <ul>
+                        <li>Document condition with photos from multiple angles and timestamps for records, ideally under daylight.</li>
+                        <li>Check tire pressure, battery charge, fluid levels, and wiper functionality before handover to ensure the car is drivable.</li>
+                        <li>Disable alarms, loosen antennas, and remove external accessories like bike racks to avoid disruptions or damage during loading.</li>
+                    </ul>
+                    <button class="filter-btn open-prep" onclick="filterContent('open-prep')">Prep for Open</button>
+                </div>
+                <div class="prep enclosed-transport">
+                    <h3>For Enclosed Transport</h3>
+                    <p>For enclosed transport, preparation is similar but requires extra care for high-value vehicles, starting with a detailed inspection to document every scratch, dent, or unique feature with high-resolution photos or video, ideally with a timestamp for reference. Consider requesting top-load placement on the trailer to minimize risks from other vehicles or shifting loads, secure loose parts like antennas, spoilers, or side mirrors with tape or protective covers, and ensure the carrier follows strict handling protocols, such as using padded straps or climate-controlled trailers, to protect your investment during the potentially lengthy journey. For a classic car like a 1970s Corvette, ensure all chrome trim is secured to avoid damage.</p>
+                    <ul>
+                        <li>Take detailed photos from all angles, including close-ups of unique features, paintwork, and undercarriage.</li>
+                        <li>Secure loose parts like mirrors, spoilers, or decals with tape or custom protective covers to prevent detachment.</li>
+                        <li>Verify carrier’s handling protocols, request top-load, and confirm loading techniques for high-value vehicles.</li>
+                    </ul>
+                    <button class="filter-btn enclosed-prep" onclick="filterContent('enclosed-prep')">Prep for Enclosed</button>
+                </div>
+                <div class="prep door-to-door">
+                    <h3>For Door-to-Door</h3>
+                    <p>For door-to-door shipping, ensure your pickup and delivery locations are accessible for large trailers by clearing pathways of obstacles like low branches, tight gates, or parked cars, and provide precise address details, including GPS coordinates, landmarks, or gate codes for gated communities. Confirm with the carrier that the site can accommodate the vehicle size (e.g., a 40-foot trailer), offer specific instructions for the driver, such as parking restrictions or HOA rules, and be prepared to suggest an alternative nearby location, like a nearby parking lot, if the primary site poses challenges for safe delivery. For instance, a homeowner in a narrow suburban street should clear the driveway and inform neighbors in advance.</p>
+                    <ul>
+                        <li>Confirm address accessibility with photos, maps, or a site visit if needed to ensure trailer access.</li>
+                        <li>Remove personal belongings, secure the interior, and lock all compartments to streamline the process.</li>
+                        <li>Prepare for carrier inspection with all documentation and keys ready to avoid delays at pickup.</li>
+                    </ul>
+                    <button class="filter-btn door-prep" onclick="filterContent('door-prep')">Prep for Door</button>
+                </div>
+                <div class="prep terminal-to-terminal">
+                    <h3>For Terminal-to-Terminal</h3>
+                    <p>For terminal-to-terminal shipping, arrange reliable transportation to the drop-off terminal, such as a rental car, ride-share service, or a friend’s assistance, and ensure the vehicle is ready for inspection by cleaning it thoroughly inside and out to identify any pre-existing damage. Keep fuel levels low, around a quarter tank, to comply with safety standards and reduce weight, remove all personal items to avoid loss or liability issues, and document the car’s condition with photos, videos, and written notes to protect against potential disputes or damage claims upon arrival at the destination terminal. For example, a shipper in Dallas should confirm the terminal’s operating hours and parking availability in advance.</p>
+                    <ul>
+                        <li>Plan terminal drop-off logistics with a backup transport option and schedule to avoid delays.</li>
+                        <li>Document vehicle condition with timestamps and multiple perspectives for accuracy in case of claims.</li>
+                        <li>Disable alarms, secure parts, and remove accessories like roof racks to prevent issues during handling.</li>
+                    </ul>
+                    <button class="filter-btn terminal-prep" onclick="filterContent('terminal-prep')">Prep for Terminal</button>
+                </div>
             </div>
             <div class="section" id="process">
                 <h2>The Car Shipping Process</h2>
-                <h3>Booking the Service</h3>
-                <ul>
-                    <li>Contact the shipping company to schedule transport.</li>
-                    <li>Provide details like vehicle type, pickup/delivery locations, and preferred dates.</li>
-                    <li>Review and sign the contract, ensuring all terms are clear.</li>
-                </ul>
-                <h3>Vehicle Pickup</h3>
-                <ul>
-                    <li>The carrier inspects the vehicle and notes its condition on the Bill of Lading.</li>
-                    <li>You or a representative must be present to hand over the keys and sign documents.</li>
-                </ul>
-                <h3>Transportation and Tracking</h3>
-                <ul>
-                    <li>Transit times vary (e.g., 1-2 weeks for cross-country). Coastal routes are faster than rural ones.</li>
-                    <li>Many companies offer tracking via phone, email, or online portals.</li>
-                </ul>
-                <h3>Delivery and Final Inspection</h3>
-                <ul>
-                    <li>Inspect the vehicle upon delivery for any new damage.</li>
-                    <li>Compare the condition to the Bill of Lading and report issues immediately.</li>
-                    <li>Sign the delivery receipt only after confirming the car’s condition.</li>
-                </ul>
+                <div class="process open-transport">
+                    <h3>Booking and Pickup</h3>
+                    <p>For open transport, begin by booking with a reputable company, providing detailed vehicle information such as make, model, year, condition (e.g., operable or inoperable), and any modifications like lifted suspensions or aftermarket parts, along with your preferred pickup dates and a contact number. At the scheduled pickup time, the carrier will conduct a thorough inspection to document the car’s current state, including existing scratches, dents, or paint chips, secure it onto an open trailer with heavy-duty straps, and provide you with a Bill of Lading to sign, which serves as a legal record of the shipment’s starting condition. For example, shipping a Toyota Camry from Phoenix to Chicago requires confirming the pickup window, typically a 1-3 day range.</p>
+                    <button class="filter-btn booking-open" onclick="filterContent('booking-open')">Book Open</button>
+                    <h3>Transportation</h3>
+                    <p>During transportation, your vehicle is moved alongside others on an open trailer, typically covering 500 miles per day depending on weather conditions, traffic congestion, and the carrier’s route efficiency (e.g., avoiding construction zones). Stay in touch with the carrier for real-time updates via phone calls, text messages, or an online tracking system, ensuring you’re informed about any delays due to snowstorms, road closures, or detours, and anticipate arrival times to plan your schedule accordingly. Some carriers offer GPS tracking for precise monitoring.</p>
+                    <button class="filter-btn transport-open" onclick="filterContent('transport-open')">Track Open</button>
+                    <h3>Delivery</h3>
+                    <p>Upon delivery, inspect your vehicle meticulously for any new damage by comparing it to the initial Bill of Lading, checking for scratches, dents, tire wear, or interior issues under bright lighting or with a flashlight. Sign the document only after confirming its condition matches the pre-shipment state, and address any concerns with the carrier immediately, taking photos or videos to initiate a claim if necessary, ensuring a smooth resolution and retaining all documentation for your records. For instance, check under the car for debris damage after a cross-country trip.</p>
+                    <button class="filter-btn delivery-open" onclick="filterContent('delivery-open')">Confirm Open</button>
+                </div>
+                <div class="process enclosed-transport">
+                    <h3>Booking and Pickup</h3>
+                    <p>For enclosed transport, select a carrier experienced with high-value vehicles and reserve your slot by providing vehicle details, including value, model, and special requirements like low clearance, along with preferred dates. The car is carefully loaded into a covered trailer after a detailed inspection by a trained professional, with the carrier using padded restraints and protective covers to prevent movement, offering you a copy of the Bill of Lading for your records and peace of mind. For a luxury vehicle like a Bentley, ensure the carrier documents chrome and leather conditions.</p>
+                    <button class="filter-btn booking-enclosed" onclick="filterContent('booking-enclosed')">Book Enclosed</button>
+                    <h3>Transportation</h3>
+                    <p>Enclosed trailers carry fewer vehicles, ensuring minimal handling and added security with a controlled environment, though this may result in slightly longer transit times of 5-12 days depending on distance and carrier availability. The protected setting shields against weather, debris, and theft, with carriers providing periodic updates via phone, email, or a tracking portal to keep you informed throughout the extended journey, especially for long routes like Miami to Seattle. Some carriers offer climate-controlled options for sensitive vehicles.</p>
+                    <button class="filter-btn transport-enclosed" onclick="filterContent('transport-enclosed')">Track Enclosed</button>
+                    <h3>Delivery</h3>
+                    <p>Inspect your vehicle thoroughly upon enclosed delivery, noting any issues on the Bill of Lading and comparing it to pre-shipment photos taken from multiple angles, including close-ups of paintwork or custom features. Ensure the carrier addresses any concerns immediately, such as minor scratches, dirt accumulation, or mechanical issues, before signing off, and retain all documentation, including video evidence, for potential insurance claims if damage is discovered post-delivery. For example, check a classic car’s undercarriage for transport-related wear.</p>
+                    <button class="filter-btn delivery-enclosed" onclick="filterContent('delivery-enclosed')">Confirm Enclosed</button>
+                </div>
+                <div class="process door-to-door">
+                    <h3>Booking and Pickup</h3>
+                    <p>Book door-to-door service by providing clear location details, including street address, GPS coordinates, and any access notes like gate codes or parking restrictions, and confirm the pickup date with the carrier to align with your schedule, typically within a 1-3 day window. The driver will arrive at your specified address, conduct an inspection with you present to note existing conditions, and load your vehicle onto the trailer, ensuring all paperwork, including the Bill of Lading, is completed before departing for your destination. For example, a pickup in a busy urban area like San Francisco requires clear instructions for tight streets.</p>
+                    <button class="filter-btn booking-door" onclick="filterContent('booking-door')">Book Door</button>
+                    <h3>Transportation</h3>
+                    <p>Your vehicle is transported to your delivery address with carriers coordinating to ensure accessibility, providing regular updates via phone calls, emails, or a mobile app to keep you informed about progress or delays due to traffic or weather. The journey may take 4-10 days depending on distance (e.g., 7 days for New York to Los Angeles), with adjustments made for road conditions, construction, or seasonal events to keep your car safe and secure throughout the entire process. Carriers may reroute to avoid congested areas.</p>
+                    <button class="filter-btn transport-door" onclick="filterContent('transport-door')">Track Door</button>
+                    <h3>Delivery</h3>
+                    <p>The carrier delivers to your chosen location, unloading the vehicle and conducting a final inspection with you present to verify its condition under good lighting. Check for any new damage, such as scuffs or interior dirt, by comparing to the Bill of Lading, sign the document after confirmation, and discuss any issues with the driver to ensure satisfaction and address concerns before they leave your property. For instance, ensure a delivery in a rural area has clear access for unloading.</p>
+                    <button class="filter-btn delivery-door" onclick="filterContent('delivery-door')">Confirm Door</button>
+                </div>
+                <div class="process terminal-to-terminal">
+                    <h3>Booking and Pickup</h3>
+                    <p>Book terminal-to-terminal service and arrange to drop off your vehicle at the designated terminal, providing details about its condition, dimensions, and preferred pickup date to the carrier, typically within a flexible 2-5 day window. The carrier will inspect and load it onto a trailer, issuing a Bill of Lading that you should review carefully for accuracy, including any pre-existing damage like scratches or chipped paint, before leaving the facility and entrusting your car to their care. For example, dropping off at a Chicago terminal requires confirming hours and parking.</p>
+                    <button class="filter-btn booking-terminal" onclick="filterContent('booking-terminal')">Book Terminal</button>
+                    <h3>Transportation</h3>
+                    <p>Your vehicle is shipped to the destination terminal, typically on an open trailer, with a daily progress of 500 miles or more depending on logistics, road conditions, and carrier schedules. Contact the carrier for tracking information or use their online portal to monitor the shipment’s status, anticipate arrival times (e.g., 5-7 days for a 2,000-mile trip), and prepare for pickup at the receiving terminal with adequate notice to avoid storage fees. Carriers may consolidate shipments for efficiency.</p>
+                    <button class="filter-btn transport-terminal" onclick="filterContent('transport-terminal')">Track Terminal</button>
+                    <h3>Delivery</h3>
+                    <p>Pick up your vehicle at the destination terminal after an inspection with terminal staff, comparing its condition to the Bill of Lading and checking for new issues like dents, tire wear, or interior dirt under good lighting. Sign the document once satisfied with the vehicle’s state, and address any discrepancies with the terminal manager to ensure a fair resolution, taking photos for records, and secure your car for the drive home. For example, picking up in Atlanta requires coordinating with terminal hours.</p>
+                    <button class="filter-btn delivery-terminal" onclick="filterContent('delivery-terminal')">Confirm Terminal</button>
+                </div>
             </div>
             <div class="section" id="legal">
                 <h2>Legal and Insurance Considerations</h2>
-                <ul>
-                    <li><strong>Carrier Insurance:</strong> Most carriers provide basic insurance, but coverage limits vary. Verify details in the contract.</li>
-                    <li><strong>Supplemental Insurance:</strong> Consider additional insurance for high-value vehicles.</li>
-                    <li><strong>Federal Regulations:</strong> Carriers must comply with Federal Motor Carrier Safety Administration (FMCSA) rules.</li>
-                    <li><strong>Damage Claims:</strong> File claims promptly with the carrier if damage occurs, providing photos and documentation.</li>
-                </ul>
+                <div class="legal open-transport">
+                    <h3>For Open Transport</h3>
+                    <p>Open transport carriers provide basic insurance coverage as a standard inclusion, but the extent of protection varies depending on the carrier’s policy, often covering only a minimal amount per incident, such as $5,000-$10,000 for standard vehicles. AutoMove ensures all partners are USDOT-compliant and carry adequate insurance to meet federal requirements, but you might consider purchasing additional gap protection or supplemental coverage to address potential damages not included in the base policy, especially for older vehicles or those with sentimental value, like a family heirloom car. Verify the carrier’s USDOT and Motor Carrier (MC) numbers on the FMCSA website to ensure compliance and safety standards are met.</p>
+                    <ul>
+                        <li>Verify carrier’s USDOT and MC numbers for legal compliance and safety standards via FMCSA’s online portal.</li>
+                        <li>Review insurance coverage details, including limits, exclusions (e.g., personal items), and claim processes in writing.</li>
+                        <li>File claims promptly with photos, videos, and documentation if damage occurs during transit, ideally within 24 hours.</li>
+                    </ul>
+                    <button class="filter-btn legal-open" onclick="filterContent('legal-open')">Open Legal</button>
+                </div>
+                <div class="legal enclosed-transport">
+                    <h3>For Enclosed Transport</h3>
+                    <p>Enclosed transport includes higher insurance coverage due to the vehicle’s value, often tailored to luxury or classic cars with policies that reflect their market or appraised worth, such as $50,000-$500,000 for high-end models. AutoMove partners with carriers offering comprehensive policies that cover a wide range of risks, including weather damage, theft, vandalism, and handling errors, ensuring compliance with federal regulations like FMCSA standards and providing peace of mind for high-stake shipments across long distances or multiple states. For example, a Rolls-Royce shipment would include specific coverage for custom paint and interiors.</p>
+                    <ul>
+                        <li>Confirm high-value insurance options with detailed coverage limits and valuation methods (e.g., appraised value).</li>
+                        <li>Ensure carrier compliance with FMCSA standards for safety, training, and operational integrity.</li>
+                        <li>Document condition with video and photos for potential claims support and dispute resolution with carriers.</li>
+                    </ul>
+                    <button class="filter-btn legal-enclosed" onclick="filterContent('legal-enclosed')">Enclosed Legal</button>
+                </div>
+                <div class="legal door-to-door">
+                    <h3>For Door-to-Door</h3>
+                    <p>Door-to-door transport requires clear and comprehensive insurance terms to protect your vehicle during the entire journey from pickup to delivery, covering all phases, including loading, transit, and unloading. AutoMove ensures carriers provide adequate coverage and transparent claim processes, allowing you to address any issues directly with the provider, especially in cases where access challenges, weather delays, or handling mishaps arise during the customized routing. For instance, a delivery in a snowy region like Denver requires coverage for potential weather-related delays or minor damage.</p>
+                    <ul>
+                        <li>Check carrier insurance policies for full trip coverage, including loading and unloading phases.</li>
+                        <li>Verify USDOT compliance for legal and safety standards across all states traveled.</li>
+                        <li>File claims with detailed documentation, including timestamps and witness statements if available, for quick resolution.</li>
+                    </ul>
+                    <button class="filter-btn legal-door" onclick="filterContent('legal-door')">Door Legal</button>
+                </div>
+                <div class="legal terminal-to-terminal">
+                    <h3>For Terminal-to-Terminal</h3>
+                    <p>Terminal-to-terminal transport includes standard insurance coverage for the duration of the shipment between hubs, typically covering basic damage or loss during transit, with limits similar to open transport (e.g., $5,000-$10,000). AutoMove verifies carrier compliance with federal regulations and recommends documenting your vehicle’s condition with detailed photos, notes, and video recordings to support potential claims, especially if terminals are busy, handling is frequent, or storage conditions vary (e.g., outdoor lots). For example, a car stored briefly at a busy terminal in Los Angeles should be thoroughly documented to avoid disputes.</p>
+                    <ul>
+                        <li>Review terminal insurance terms for coverage scope, including storage periods at terminals.</li>
+                        <li>Ensure FMCSA compliance for regulatory adherence and carrier accountability across routes.</li>
+                        <li>Document for claim support with before-and-after evidence, including terminal receipts and photos.</li>
+                    </ul>
+                    <button class="filter-btn legal-terminal" onclick="filterContent('legal-terminal')">Terminal Legal</button>
+                </div>
             </div>
             <div class="section" id="tips">
                 <h2>Tips for a Smooth Car Shipping Experience</h2>
-                <ul>
-                    <li><strong>Plan Ahead:</strong> Book 2-4 weeks in advance to secure better rates and availability.</li>
-                    <li><strong>Communicate Clearly:</strong> Stay in touch with the carrier for updates or changes.</li>
-                    <li><strong>Understand the Contract:</strong> Read all terms, including cancellation policies and liability clauses.</li>
-                    <li><strong>Prepare for Delays:</strong> Weather, traffic, or logistical issues may cause minor delays.</li>
-                </ul>
+                <div class="tip open-transport">
+                    <h3>For Open Transport</h3>
+                    <p>For open transport, book your shipment early, ideally 2-4 weeks in advance, to secure competitive rates and ensure availability during peak seasons like summer or holiday relocations when demand for trailers spikes. Request top-load placement on the trailer to reduce exposure to road debris and potential scratches from lower-level vehicles, consider choosing a carrier with a track record of clear communication (e.g., daily updates), and stay updated on your vehicle’s progress through regular calls, texts, or a dedicated tracking app to anticipate arrival times and plan accordingly. For example, a top-load request for a sedan shipping from Dallas to Seattle can minimize gravel damage on highways.</p>
+                    <ul>
+                        <li>Schedule 2-4 weeks in advance to avoid peak season surcharges and secure trailer spots.</li>
+                        <li>Request top-load placement to minimize debris impact and risks from lower-level vehicles.</li>
+                        <li>Stay updated via carrier contact, email notifications, or a real-time tracking app for peace of mind.</li>
+                    </ul>
+                    <button class="filter-btn tip-open" onclick="filterContent('tip-open')">Open Tips</button>
+                </div>
+                <div class="tip enclosed-transport">
+                    <h3>For Enclosed Transport</h3>
+                    <p>For enclosed transport, verify the carrier’s experience with high-value vehicles by reviewing their portfolio, customer feedback on platforms like Yelp or BBB, and specific handling certifications, and book well in advance—up to 6-8 weeks—to secure a spot during high-demand periods like auto shows or summer moves. Request detailed handling protocols, such as padded loading, climate-controlled trailers, and GPS tracking, to protect your investment, and ensure all insurance details, including valuation (e.g., market or appraised value) and claim procedures, are confirmed in writing before the shipment begins. For a vintage Jaguar, confirm the carrier uses soft straps and secure loading ramps.</p>
+                    <ul>
+                        <li>Confirm carrier expertise with luxury vehicle testimonials and handling certifications from industry bodies.</li>
+                        <li>Book early for availability during high-demand periods like classic car auctions or relocations.</li>
+                        <li>Ensure clear contract terms with insurance specifics, GPS tracking, and climate-control options.</li>
+                    </ul>
+                    <button class="filter-btn tip-enclosed" onclick="filterContent('tip-enclosed')">Enclosed Tips</button>
+                </div>
+                <div class="tip door-to-door">
+                    <h3>For Door-to-Door</h3>
+                    <p>For door-to-door shipping, provide precise location details, including photos of the pickup and delivery sites, GPS coordinates, and notes about access challenges like narrow driveways or low-hanging trees, and ensure accessibility by clearing pathways of obstacles like parked cars or construction materials. Stay in constant contact with the carrier via phone, email, or app to avoid scheduling issues, be prepared to offer alternative nearby locations, like a nearby mall parking lot, if the primary site poses challenges, and confirm delivery windows (e.g., morning or afternoon) to align with your availability. For example, a delivery in a gated community requires sharing gate codes in advance.</p>
+                    <ul>
+                        <li>Clear access for large trailers with wide pathways and no overhead obstructions like branches.</li>
+                        <li>Communicate address details, access notes, and alternative sites if needed to ensure smooth delivery.</li>
+                        <li>Plan for flexible delivery windows to accommodate weather, traffic, or carrier delays.</li>
+                    </ul>
+                    <button class="filter-btn tip-door" onclick="filterContent('tip-door')">Door Tips</button>
+                </div>
+                <div class="tip terminal-to-terminal">
+                    <h3>For Terminal-to-Terminal</h3>
+                    <p>For terminal-to-terminal shipping, plan your logistics carefully by arranging reliable transportation to the drop-off terminal, such as a rental car, Uber, or a friend’s assistance, and confirming the pickup schedule with the carrier to avoid delays. Check terminal hours, availability, and parking options in advance (e.g., via the carrier’s website), ensure your vehicle is ready for inspection with all fluids checked and personal items removed, and coordinate with a friend or service if you can’t pick up immediately upon arrival to avoid storage fees, which can range from $10-$50 per day. For example, a terminal in Houston may have limited weekend hours, so plan accordingly.</p>
+                    <ul>
+                        <li>Arrange terminal transportation with a backup plan and confirmed timing to avoid delays.</li>
+                        <li>Check terminal schedules, operating hours, and parking facilities to streamline logistics.</li>
+                        <li>Prepare vehicle documentation and arrange for timely pickup support to avoid extra fees.</li>
+                    </ul>
+                    <button class="filter-btn tip-terminal" onclick="filterContent('tip-terminal')">Terminal Tips</button>
+                </div>
             </div>
             <div class="section" id="special">
                 <h2>Special Considerations</h2>
-                <ul>
-                    <li><strong>Shipping Classic or Luxury Cars:</strong> Use enclosed transport and verify the carrier’s experience with high-value vehicles.</li>
-                    <li><strong>International Car Shipping:</strong> Requires customs paperwork, port fees, and compliance with international regulations.</li>
-                    <li><strong>Shipping Inoperable Vehicles:</strong> May require special equipment like a forklift, increasing costs.</li>
-                    <li><strong>Seasonal Challenges:</strong> Winter weather can delay shipments, especially in northern states.</li>
-                </ul>
+                <div class="special open-transport">
+                    <h3>For Open Transport</h3>
+                    <p>Open transport is an excellent choice for standard vehicles like family sedans, work trucks, or economy cars, offering significant cost savings and widespread availability across the USA, making it ideal for moves like a relocation from Denver to Phoenix. However, owners should be aware of potential exposure to weather conditions, such as heavy rain in the Southeast or snow in the Midwest, which could affect the vehicle’s exterior, particularly if it has existing paint chips or a sensitive finish. Road debris like gravel or dust on highways, especially in rural areas, may cause minor cosmetic wear, so consider this for vehicles where slight imperfections are acceptable. Seasonal factors, like summer heat or winter ice, can also impact transit times, so check weather forecasts for your route and discuss protective measures, like top-load placement, with your carrier to minimize risks.</p>
+                    <ul>
+                        <li>Monitor weather forecasts for your route to anticipate delays or exposure risks.</li>
+                        <li>Request top-load placement to reduce debris impact, especially on long highway routes.</li>
+                        <li>Choose open transport for durable vehicles where minor cosmetic wear is not a concern.</li>
+                    </ul>
+                    <button class="filter-btn special-open" onclick="filterContent('special-open')">Open Specials</button>
+                </div>
+                <div class="special enclosed-transport">
+                    <h3>For Enclosed Transport</h3>
+                    <p>Enclosed transport is the go-to option for high-value cars, such as classic Mustangs, luxury Mercedes-Benz models, or exotic supercars, requiring expert handling and maximum protection against environmental hazards. This service is critical for vehicles susceptible to damage from rain, hail, or UV exposure, or those with high monetary or sentimental value, like a restored vintage car being shipped to a national auto show. The limited capacity of enclosed trailers (typically 1-4 vehicles) means fewer stops and less handling, but also higher costs and longer scheduling times, especially during peak seasons like spring car shows. Special considerations include ensuring the carrier uses climate-controlled trailers for sensitive finishes and verifying insurance covers the vehicle’s full appraised value, particularly for rare or custom models.</p>
+                    <ul>
+                        <li>Choose carriers with climate-controlled trailers for sensitive paint or interiors.</li>
+                        <li>Verify insurance coverage matches the vehicle’s appraised or market value.</li>
+                        <li>Plan for longer lead times due to limited trailer availability, especially during auto shows.</li>
+                    </ul>
+                    <button class="filter-btn special-enclosed" onclick="filterContent('special-enclosed')">Enclosed Specials</button>
+                </div>
+                <div class="special door-to-door">
+                    <h3>For Door-to-Door</h3>
+                    <p>Door-to-door shipping works best in accessible areas like urban or suburban neighborhoods with wide streets and ample parking, such as a home in a Dallas suburb. However, rural or remote locations, like a farm in Montana or a mountain cabin, may require special arrangements due to narrow roads, low bridges, or unpaved driveways, potentially increasing costs or requiring a nearby meeting point like a local gas station. Coordinate with the carrier to confirm accessibility, provide detailed directions, and consider seasonal challenges, such as snow-covered roads or flooding, which could delay delivery. For example, a delivery to a coastal town during hurricane season requires extra planning for weather-related delays.</p>
+                    <ul>
+                        <li>Confirm accessibility with detailed directions and photos of the pickup/delivery site.</li>
+                        <li>Plan for seasonal challenges like snow, floods, or construction affecting access.</li>
+                        <li>Prepare an alternative nearby location for large trailers if the primary site is inaccessible.</li>
+                    </ul>
+                    <button class="filter-btn special-door" onclick="filterContent('special-door')">Door Specials</button>
+                </div>
+                <div class="special terminal-to-terminal">
+                    <h3>For Terminal-to-Terminal</h3>
+                    <p>Terminal-to-terminal shipping offers significant savings but requires proximity to transport hubs, ideally within 50 miles, to minimize logistical challenges. For example, shipping from a terminal in Los Angeles to one in Chicago is cost-effective but requires you to arrange transport to and from these hubs, which can be inconvenient if you’re in a rural area far from a major city. Consider terminal storage fees (e.g., $10-$50 per day) if you can’t pick up immediately, and verify the terminal’s security measures, such as gated lots or surveillance, to protect your vehicle during brief storage periods. Seasonal demand, like summer relocations, can lead to crowded terminals, so plan drop-off and pickup times carefully.</p>
+                    <ul>
+                        <li>Check terminal proximity and arrange reliable transport to and from hubs.</li>
+                        <li>Verify terminal security features, like fencing or cameras, for safe storage.</li>
+                        <li>Plan to avoid storage fees by coordinating timely drop-off and pickup schedules.</li>
+                    </ul>
+                    <button class="filter-btn special-terminal" onclick="filterContent('special-terminal')">Terminal Specials</button>
+                </div>
             </div>
             <div class="section" id="faq">
                 <h2>Frequently Asked Questions</h2>
-                <ul>
-                    <li><strong>Is my car safe during shipping?</strong> Reputable carriers take precautions, but open transport carries minor risks.</li>
-                    <li><strong>How long does shipping take?</strong> Typically 1-2 weeks, depending on distance and route.</li>
-                    <li><strong>Can I pack items in my car?</strong> No, personal items are not insured and may violate carrier policies.</li>
-                    <li><strong>What if my car is damaged?</strong> Document the damage and file a claim with the carrier immediately.</li>
-                </ul>
+                <div class="faq open-transport">
+                    <h3>About Open Transport</h3>
+                    <p>Open transport is safe and reliable with reputable carriers, offering a cost-effective solution for standard vehicles like sedans, SUVs, or pickups, with typical transit times of 4-10 days depending on distance (e.g., 5 days for 1,500 miles). However, vehicles are exposed to weather elements like rain or snow, which may cause minor cosmetic wear, and road debris like gravel, which could lead to small scratches. Choose carriers with high safety ratings and USDOT compliance to minimize risks, and consider top-load placement to reduce exposure. Common questions include whether personal items can be left in the car (not recommended due to insurance exclusions) and how to handle minor damage claims (document with photos and file promptly).</p>
+                    <ul>
+                        <li>Is it safe? Yes, with reputable carriers, but expect minor exposure to elements and debris.</li>
+                        <li>How long does it take? Typically 4-10 days, depending on distance and route conditions.</li>
+                        <li>Can I leave items in the car? No, personal items are not insured and may cause safety issues.</li>
+                    </ul>
+                    <button class="filter-btn faq-open" onclick="filterContent('faq-open')">Open FAQs</button>
+                </div>
+                <div class="faq enclosed-transport">
+                    <h3>About Enclosed Transport</h3>
+                    <p>Enclosed transport is ideal for high-value vehicles, offering protection against weather, debris, and theft, with transit times of 5-12 days due to limited trailer capacity and fewer stops. Insurance coverage is higher, often tailored to the vehicle’s appraised value (e.g., $100,000 for a classic car), and carriers use padded interiors or climate controls for added safety. Common questions include the cost difference (30-50% more than open transport), availability (less frequent, requiring advance booking), and whether it’s worth it (yes for luxury or irreplaceable vehicles). For example, shipping a Ferrari to an auto show ensures protection but requires early scheduling.</p>
+                    <ul>
+                        <li>Why choose enclosed? It protects valuable cars from damage and theft with enhanced security.</li>
+                        <li>How much more expensive? 30-50% higher than open transport, depending on distance.</li>
+                        <li>How to book? Reserve 6-8 weeks in advance for high-demand periods or routes.</li>
+                    </ul>
+                    <button class="filter-btn faq-enclosed" onclick="filterContent('faq-enclosed')">Enclosed FAQs</button>
+                </div>
+                <div class="faq door-to-door">
+                    <h3>About Door-to-Door</h3>
+                    <p>Door-to-door shipping adjusts for inaccessible locations, such as rural or gated areas, by coordinating alternative nearby drop-off points, like a local parking lot, adding $100-$300 to costs due to customized routing. Transit times range from 4-10 days, depending on distance and accessibility (e.g., 7 days for 2,000 miles). Common questions include handling inaccessible locations (carriers will work with you), what to do if you’re unavailable for delivery (reschedule or assign a proxy), and insurance coverage (full trip coverage is standard). For example, a delivery to a busy urban area like Manhattan requires precise coordination.</p>
+                    <ul>
+                        <li>Can rural areas be serviced? Yes, with alternative nearby locations if needed.</li>
+                        <li>What if I’m unavailable? Reschedule or assign a trusted contact for delivery.</li>
+                        <li>Is it insured? Yes, with comprehensive coverage for the entire journey.</li>
+                    </ul>
+                    <button class="filter-btn faq-door" onclick="filterContent('faq-door')">Door FAQs</button>
+                </div>
+                <div class="faq terminal-to-terminal">
+                    <h3>About Terminal-to-Terminal</h3>
+                    <p>Terminal-to-terminal shipping saves costs (up to $200 less than door-to-door) but requires travel to transport hubs, with transit times of 4-10 days depending on distance and terminal schedules. Common questions include storage fees (avoid by picking up promptly), terminal security (most have gated lots and cameras), and how to find terminals (check carrier websites for locations). For example, shipping from a terminal in Miami to one in Seattle is budget-friendly but requires logistical planning for drop-off and pickup.</p>
+                    <ul>
+                        <li>Are there storage fees? Yes, $10-$50/day if not picked up promptly.</li>
+                        <li>Is it secure? Most terminals have gated lots and surveillance for safety.</li>
+                        <li>How to find terminals? Check carrier websites or contact support for locations.</li>
+                    </ul>
+                    <button class="filter-btn faq-terminal" onclick="filterContent('faq-terminal')">Terminal FAQs</button>
+                </div>
             </div>
             <div class="section" id="conclusion">
                 <h2>Conclusion</h2>
-                <p>Shipping a car in the USA involves careful planning and research. By understanding the types of services, costs, and preparation steps, you can ensure a seamless experience. Choose a reputable company, prepare your vehicle properly, and stay informed throughout the process. With these steps, your car will arrive safely and on time, ready for your next journey.</p>
+                <p>Shipping a car across the USA is a significant undertaking that requires careful planning, research, and attention to detail to ensure a seamless and stress-free experience. By understanding the various types of services—open transport for budget-conscious shippers, enclosed transport for high-value vehicles, door-to-door for convenience, and terminal-to-terminal for cost savings—you can select the option that best aligns with your needs, budget, and vehicle type. Consider the factors affecting costs, such as distance, vehicle size, and seasonal demand, and take proactive steps to prepare your car, such as cleaning, documenting its condition, and removing personal items. Choosing a reputable company with transparent pricing, USDOT compliance, and strong customer reviews is critical to avoiding pitfalls and ensuring reliability. Throughout the process, stay informed with carrier updates, verify insurance coverage, and inspect your vehicle thoroughly upon delivery to confirm its condition. With these steps, AutoMove ensures your car arrives safely, on time, and ready for your next journey, whether it’s a cross-country relocation, a vehicle purchase, or a special delivery to a loved one. Start planning today to make your car shipping experience smooth and successful!</p>
             </div>
         </div>
     </div>
     <footer>
-        <p>&copy; 2025 AutoMove. All rights reserved.</p>
+        <p>&copy; 2025 AutoMove. All rights reserved. Your trusted partner for nationwide car shipping.</p>
     </footer>
+    <div class="popup" id="contentPopup">
+        <button class="close-btn" onclick="closePopup()">×</button>
+        <div id="popupContent"></div>
+    </div>
+    <script>
+    function filterContent(filterType) {
+        const popup = document.getElementById('contentPopup');
+        const popupContent = document.getElementById('popupContent');
+        popupContent.innerHTML = ''; // Clear previous content
+
+        const contentMap = {
+            'intro-filter': `
+                <h2>Welcome to AutoMove: Your Trusted Car Shipping Partner</h2>
+                <p>AutoMove is your go-to solution for reliable, cost-effective, and customer-focused vehicle shipping across the USA. With over 20 years of experience, we offer tailored services for all types of vehicles, from family sedans to luxury classics, with no upfront costs and transparent pricing. Our network of USDOT-compliant carriers ensures your car is handled with care, whether you’re relocating from New York to California, purchasing a vehicle from a distant dealership, or sending a car to a family member. Get started with a free, no-obligation quote today, and explore our range of services, including open and enclosed transport, door-to-door, and terminal-to-terminal options, all designed to meet your budget and needs.</p>
+                <ul>
+                    <li><strong>Why Choose AutoMove?</strong> Transparent pricing, no hidden fees, and a commitment to customer satisfaction.</li>
+                    <li><strong>Our Promise:</strong> Safe, timely delivery with real-time tracking and dedicated support.</li>
+                    <li><strong>Next Steps:</strong> Click below to request a quote or explore our services in detail.</li>
+                </ul>
+            `,
+            'open-filter': `
+                <h2>Open Transport: Affordable and Efficient</h2>
+                <p>Open transport is the most popular and cost-effective way to ship standard vehicles like sedans, SUVs, or pickups across the USA. Using open-air trailers, this method offers quick scheduling and competitive rates, ideal for moves like Chicago to Atlanta or Phoenix to Denver. Your vehicle is securely strapped onto a multi-car trailer, covering up to 500 miles daily, with real-time tracking available. While exposed to weather and minor road debris, reputable carriers like AutoMove’s partners use secure loading and top-load options to minimize risks. Perfect for budget-conscious shippers who don’t need premium protection.</p>
+                <ul>
+                    <li><strong>Cost Range:</strong> $500-$1,500, depending on distance and vehicle size.</li>
+                    <li><strong>Transit Time:</strong> 4-10 days, based on route and conditions.</li>
+                    <li><strong>Best For:</strong> Standard vehicles where minor cosmetic wear is acceptable.</li>
+                </ul>
+            `,
+            'enclosed-filter': `
+                <h2>Enclosed Transport: Premium Protection for High-Value Cars</h2>
+                <p>Enclosed transport offers the ultimate protection for luxury, classic, or exotic vehicles, such as a 1965 Mustang or a modern Ferrari, shielding them from weather, debris, and theft. Using fully covered trailers with limited capacity (1-4 cars), this service ensures minimal handling and enhanced security, ideal for cross-country moves like Los Angeles to New York. Features like padded interiors, climate control, and GPS tracking are available with AutoMove’s vetted carriers. While pricier and less frequent, it’s the best choice for irreplaceable vehicles requiring meticulous care.</p>
+                <ul>
+                    <li><strong>Cost Range:</strong> $1,200-$2,000, based on vehicle value and distance.</li>
+                    <li><strong>Transit Time:</strong> 5-12 days due to limited trailer availability.</li>
+                    <li><strong>Best For:</strong> High-value, classic, or sensitive vehicles needing maximum protection.</li>
+                </ul>
+            `,
+            'door-filter': `
+                <h2>Door-to-Door: Ultimate Convenience</h2>
+                <p>Door-to-door shipping brings unmatched convenience by picking up and delivering your vehicle directly to your specified locations, such as your home in Seattle or a dealership in Miami. Ideal for busy professionals or those relocating, this service minimizes your effort, with carriers coordinating precise schedules and access. Inaccessible areas like rural farms may require a nearby meeting point, but AutoMove ensures clear communication and flexible solutions. Expect regular updates via phone, email, or app, making it perfect for a hands-off experience.</p>
+                <ul>
+                    <li><strong>Cost Add-On:</strong> $100-$300 more than terminal-to-terminal, based on accessibility.</li>
+                    <li><strong>Transit Time:</strong> 4-10 days, depending on distance and route.</li>
+                    <li><strong>Best For:</strong> Urban/suburban customers prioritizing ease and direct delivery.</li>
+                </ul>
+            `,
+            'terminal-filter': `
+                <h2>Terminal-to-Terminal: Budget-Friendly Option</h2>
+                <p>Terminal-to-terminal shipping is the most economical choice, ideal for cost-conscious shippers near major hubs like Dallas or Boston. You drop off and pick up your vehicle at designated terminals, saving up to $200 compared to door-to-door. AutoMove’s extensive terminal network ensures flexibility, though you’ll need to arrange transport to/from hubs. Secure lots and clear schedules make this reliable, but plan for potential storage fees if pickup is delayed. Perfect for students or budget travelers comfortable with logistics.</p>
+                <ul>
+                    <li><strong>Cost Range:</strong> $400-$1,200, depending on distance and terminal.</li>
+                    <li><strong>Transit Time:</strong> 4-10 days, based on terminal schedules.</li>
+                    <li><strong>Best For:</strong> Budget shippers near terminals willing to handle logistics.</li>
+                </ul>
+            `,
+            'cost-filter': `
+                <h2>Understanding Car Shipping Costs</h2>
+                <p>Car shipping costs vary based on distance, vehicle type, service choice, and season. Open transport ranges from $500-$1,500, ideal for standard vehicles like sedans or SUVs, while enclosed transport costs $1,200-$2,000 for luxury or classic cars. Door-to-door adds $100-$300 for convenience, and terminal-to-terminal saves up to $200 for budget-conscious shippers. Factors like fuel prices, vehicle size (e.g., a large truck vs. a compact car), and peak seasons (summer or holidays) can increase costs. AutoMove offers transparent quotes with no hidden fees, and booking 2-4 weeks early can lock in lower rates.</p>
+                <ul>
+                    <li><strong>Key Factors:</strong> Distance, vehicle size/weight, service type, and seasonal demand.</li>
+                    <li><strong>Savings Tip:</strong> Book early and consider terminal-to-terminal for lower costs.</li>
+                    <li><strong>Hidden Costs:</strong> None with AutoMove—our quotes are clear and upfront.</li>
+                </ul>
+            `,
+            'standard-choice': `
+                <h2>Choosing a Company for Standard Vehicles</h2>
+                <p>When selecting a company for open transport, prioritize those with a proven track record of reliability and experience, such as carriers with over 10 years in business and a fleet of well-maintained open trailers. Look for transparency in pricing, avoiding hidden fees or excessive upfront deposits, and verify high customer satisfaction through platforms like the Better Business Bureau (BBB), Trustpilot, or Google Reviews, aiming for at least a 4.5-star rating with hundreds of reviews. AutoMove partners with USDOT-compliant carriers offering clear contracts, competitive rates, and consistent on-time deliveries for standard vehicles like Honda Civics or Ford F-150s. Check for additional services like real-time tracking or flexible scheduling to enhance your experience, especially for regional moves like Chicago to St. Louis.</p>
+                <ul>
+                    <li><strong>Verify Credentials:</strong> Confirm USDOT and MC numbers on the FMCSA website for compliance.</li>
+                    <li><strong>Compare Quotes:</strong> Request at least three quotes to ensure competitive pricing, typically $500-$1,500.</li>
+                    <li><strong>Customer Feedback:</strong> Look for reviews highlighting punctuality, communication, and damage-free deliveries.</li>
+                </ul>
+            `,
+            'luxury-choice': `
+                <h2>Choosing a Company for Luxury Vehicles</h2>
+                <p>For enclosed transport, choose carriers with specialized expertise in handling high-value vehicles, such as classic Mustangs, luxury BMWs, or exotic Lamborghinis. Verify their experience through detailed testimonials, case studies of similar shipments (e.g., vintage cars to auto shows), and certifications from organizations like the Auto Transport Association. AutoMove ensures carriers offer comprehensive insurance covering the vehicle’s full appraised value, climate-controlled trailers, and GPS tracking for added security. Check for high ratings (4.7+ stars) on review platforms and confirm additional services like padded loading or white-glove handling to protect your investment during long hauls, such as Miami to Seattle.</p>
+                <ul>
+                    <li><strong>Specialized Expertise:</strong> Select carriers with a history of luxury vehicle transport and certifications.</li>
+                    <li><strong>Insurance Coverage:</strong> Ensure policies cover full value, often $50,000-$500,000, with clear claim processes.</li>
+                    <li><strong>Premium Services:</strong> Look for climate control, GPS tracking, and minimal handling for maximum protection.</li>
+                </ul>
+            `,
+            'convenience-choice': `
+                <h2>Choosing a Company for Door-to-Door</h2>
+                <p>For door-to-door shipping, select companies offering flexible scheduling, clear communication via phone, email, or apps, and a customer-centric approach with 24/7 support. AutoMove partners with carriers that service urban, suburban, and accessible rural areas, ensuring smooth pickups and deliveries, such as from a San Francisco home to a Dallas office. Verify their ability to handle your specific locations by checking route coverage and customer feedback for punctuality and problem-solving. Look for no upfront payment policies to reduce financial risk and high ratings (4.6+ stars) on platforms like Yelp to ensure reliability for a hassle-free experience.</p>
+                <ul>
+                    <li><strong>Location Coverage:</strong> Confirm service availability for your pickup and delivery addresses.</li>
+                    <li><strong>Communication:</strong> Choose carriers with real-time updates and responsive support teams.</li>
+                    <li><strong>Customer Reviews:</strong> Prioritize high ratings for punctuality and accessibility handling.</li>
+                </ul>
+            `,
+            'budget-choice': `
+                <h2>Choosing a Company for Terminal-to-Terminal</h2>
+                <p>For terminal-to-terminal shipping, focus on companies with an extensive network of secure, accessible terminals in major cities like Los Angeles, Chicago, or Atlanta. AutoMove ensures carriers provide clear drop-off/pickup instructions, transparent pricing with no hidden fees, and reliable schedules to minimize delays. Check terminal proximity (ideally within 50 miles), hours, and security features like gated lots or cameras. Look for high customer satisfaction ratings (4.5+ stars) on review sites for efficiency and cost-effectiveness, ensuring a budget-friendly yet dependable process for cost-conscious shippers.</p>
+                <ul>
+                    <li><strong>Terminal Network:</strong> Verify locations, hours, and accessibility for seamless logistics.</li>
+                    <li><strong>Cost Transparency:</strong> Ensure no surprise fees with detailed, upfront contracts.</li>
+                    <li><strong>Reliability:</strong> Choose carriers with strong reviews for terminal efficiency and timely service.</li>
+                </ul>
+            `,
+            'open-prep': `
+                <h2>Preparing for Open Transport</h2>
+                <p>Preparing your vehicle for open transport ensures a smooth process and minimizes risks. Thoroughly clean your car inside and out to spot existing damage, like scratches or dents, during the inspection, using bright daylight or a flashlight for accuracy. Remove all personal items, including electronics, documents, or loose items in the trunk, as they’re not insured and could shift or get lost. Keep the fuel tank at about a quarter full to meet safety standards and reduce weight, and check tire pressure, battery, and fluids to ensure the car is drivable. AutoMove recommends documenting the condition with timestamped photos from multiple angles for your records, especially for a sedan like a Toyota Corolla shipped from Denver to Houston.</p>
+                <ul>
+                    <li><strong>Cleaning:</strong> Wash exterior and vacuum interior to identify pre-existing damage.</li>
+                    <li><strong>Remove Items:</strong> Clear all personal belongings to avoid loss or safety issues.</li>
+                    <li><strong>Documentation:</strong> Take photos/videos of the car, including undercarriage and interior.</li>
+                </ul>
+            `,
+            'enclosed-prep': `
+                <h2>Preparing for Enclosed Transport</h2>
+                <p>Preparing high-value vehicles for enclosed transport requires extra care. Conduct a detailed inspection, documenting every scratch, dent, or unique feature (e.g., custom paint on a 1970 Corvette) with high-resolution photos or video, ideally timestamped. Secure loose parts like antennas, spoilers, or side mirrors with tape or protective covers to prevent damage. Request top-load placement to minimize risks from other vehicles, and confirm the carrier uses padded straps and climate-controlled trailers. AutoMove ensures carriers follow strict protocols for luxury vehicles, providing peace of mind for shipments like a Ferrari from Los Angeles to New York.</p>
+                <ul>
+                    <li><strong>Detailed Inspection:</strong> Document every feature with close-up photos/videos.</li>
+                    <li><strong>Secure Parts:</strong> Use tape or covers for mirrors, spoilers, or delicate components.</li>
+                    <li><strong>Carrier Protocols:</strong> Verify padded loading and climate control for maximum protection.</li>
+                </ul>
+            `,
+            'door-prep': `
+                <h2>Preparing for Door-to-Door</h2>
+                <p>For door-to-door shipping, ensure pickup and delivery locations are accessible for large trailers (e.g., 40-foot long). Clear pathways of obstacles like low branches, parked cars, or tight gates, and provide precise address details, including GPS coordinates, gate codes, or landmarks (e.g., a nearby school). AutoMove coordinates with you to confirm site suitability, especially for urban areas like San Francisco or rural homes in Montana. Suggest an alternative nearby location, like a parking lot, if access is limited, and prepare the vehicle by cleaning it, removing items, and documenting its condition for a smooth handover.</p>
+                <ul>
+                    <li><strong>Access Prep:</strong> Clear driveways and provide detailed directions for trailers.</li>
+                    <li><strong>Alternative Sites:</strong> Offer nearby locations if primary access is restricted.</li>
+                    <li><strong>Vehicle Prep:</strong> Clean, empty, and document with photos for inspection.</li>
+                </ul>
+            `,
+            'terminal-prep': `
+                <h2>Preparing for Terminal-to-Terminal</h2>
+                <p>For terminal-to-terminal shipping, arrange reliable transport to the drop-off terminal, such as a rental car or ride-share, and confirm terminal hours and parking (e.g., a Chicago hub open 8 AM-6 PM). Clean your vehicle thoroughly to spot existing damage, keep the fuel tank at a quarter full, and remove all personal items to avoid liability issues. AutoMove recommends documenting the car’s condition with timestamped photos and videos to support claims if needed. Plan pickup logistics to avoid storage fees ($10-$50/day), ensuring a cost-effective process for a budget move like Miami to Atlanta.</p>
+                <ul>
+                    <li><strong>Logistics:</strong> Arrange transport to/from terminals with confirmed schedules.</li>
+                    <li><strong>Vehicle Prep:</strong> Clean, empty, and keep fuel low for safety and weight.</li>
+                    <li><strong>Documentation:</strong> Take detailed photos/videos to protect against damage disputes.</li>
+                </ul>
+            `,
+            'booking-open': `
+                <h2>Booking and Pickup for Open Transport</h2>
+                <p>Book open transport with AutoMove by providing vehicle details (make, model, year, condition) and preferred pickup dates, typically within a 1-3 day window. The carrier inspects your car for existing damage, secures it with heavy-duty straps on an open trailer, and issues a Bill of Lading for you to sign, documenting the car’s condition. For example, booking a Honda Accord from Phoenix to Chicago requires confirming the pickup address and ensuring the car is ready (clean, low fuel, no items). AutoMove’s carriers offer real-time tracking and clear communication for a smooth start.</p>
+                <ul>
+                    <li><strong>Booking Details:</strong> Provide accurate vehicle info and flexible pickup dates.</li>
+                    <li><strong>Inspection:</strong> Document condition with carrier, noting scratches or dents.</li>
+                    <li><strong>Paperwork:</strong> Review and sign the Bill of Lading for legal records.</li>
+                </ul>
+            `,
+            'transport-open': `
+                <h2>Tracking Open Transport</h2>
+                <p>During open transport, your vehicle travels on an open trailer, covering up to 500 miles daily, depending on weather, traffic, or route efficiency (e.g., avoiding construction). AutoMove’s carriers provide real-time updates via phone, text, or tracking apps, keeping you informed about delays from snowstorms or road closures. For a 1,500-mile trip like Denver to Houston, expect 4-7 days. Monitor progress to plan your schedule and ensure the car arrives safely with minimal exposure to debris or weather-related wear.</p>
+                <ul>
+                    <li><strong>Transit Time:</strong> 4-10 days, based on distance and conditions.</li>
+                    <li><strong>Updates:</strong> Stay informed via carrier calls, texts, or online portals.</li>
+                    <li><strong>Route Factors:</strong> Weather, traffic, or detours may adjust timelines.</li>
+                </ul>
+            `,
+            'delivery-open': `
+                <h2>Delivery for Open Transport</h2>
+                <p>Upon delivery, inspect your vehicle thoroughly against the Bill of Lading, checking for new scratches, dents, or tire wear under bright lighting. AutoMove’s carriers assist with the inspection, ensuring no new damage occurred during transit (e.g., a sedan from Los Angeles to New York). Sign the document only after confirming the condition, and take photos/videos if issues arise to support claims. Address concerns immediately with the driver for quick resolution, keeping all records for potential insurance needs.</p>
+                <ul>
+                    <li><strong>Inspection:</strong> Compare condition to Bill of Lading with good lighting.</li>
+                    <li><strong>Documentation:</strong> Take photos/videos of any new damage for claims.</li>
+                    <li><strong>Resolution:</strong> Discuss issues with the driver before signing off.</li>
+                </ul>
+            `,
+            'booking-enclosed': `
+                <h2>Booking and Pickup for Enclosed Transport</h2>
+                <p>Book enclosed transport with AutoMove for high-value vehicles, providing details like value, model, and special needs (e.g., low clearance for a Porsche 911). Reserve 6-8 weeks in advance for peak seasons. The carrier conducts a detailed inspection, noting every feature, and loads the car into a covered trailer with padded restraints. You’ll receive a Bill of Lading to sign, ensuring your luxury vehicle, like a Bentley from Miami to Seattle, is protected with climate controls and secure handling from the start.</p>
+                <ul>
+                    <li><strong>Booking Prep:</strong> Specify vehicle value and handling needs upfront.</li>
+                    <li><strong>Inspection:</strong> Document all features with high-resolution photos/videos.</li>
+                    <li><strong>Secure Loading:</strong> Ensure padded straps and climate control are used.</li>
+                </ul>
+            `,
+            'transport-enclosed': `
+                <h2>Tracking Enclosed Transport</h2>
+                <p>Enclosed transport ensures minimal handling with 1-4 vehicles per trailer, offering protection from weather, debris, and theft. Transit may take 5-12 days for long routes like Los Angeles to New York due to limited trailer availability. AutoMove’s carriers provide updates via phone, email, or GPS tracking, keeping you informed about your classic Mustang’s journey. Climate-controlled trailers and secure locks add peace of mind, with adjustments for weather or route changes communicated promptly.</p>
+                <ul>
+                    <li><strong>Transit Time:</strong> 5-12 days, depending on distance and availability.</li>
+                    <li><strong>Security:</strong> Climate control and locked trailers protect high-value cars.</li>
+                    <li><strong>Tracking:</strong> Real-time updates via calls, emails, or GPS portals.</li>
+                </ul>
+            `,
+            'delivery-enclosed': `
+                <h2>Delivery for Enclosed Transport</h2>
+                <p>Upon enclosed delivery, inspect your luxury vehicle meticulously, comparing to pre-shipment photos and the Bill of Lading, checking for scratches, dirt, or mechanical issues. AutoMove’s carriers assist with a thorough inspection, ensuring your Ferrari or vintage Corvette arrives pristine. Sign only after confirming no damage, and document any issues with photos/videos for claims. Address concerns with the driver immediately, retaining all records for insurance purposes, especially for high-value shipments.</p>
+                <ul>
+                    <li><strong>Detailed Inspection:</strong> Check all features against pre-shipment records.</li>
+                    <li><strong>Documentation:</strong> Use photos/videos to support any damage claims.</li>
+                    <li><strong>Resolution:</strong> Discuss issues with the carrier before final sign-off.</li>
+                </ul>
+            `,
+            'booking-door': `
+                <h2>Booking and Pickup for Door-to-Door</h2>
+                <p>Book door-to-door with AutoMove by providing precise pickup details, including address, GPS coordinates, and access notes (e.g., gate codes for a San Francisco home). Confirm a 1-3 day pickup window to align with your schedule. The carrier inspects your vehicle at your location, noting existing conditions, and loads it onto the trailer, issuing a Bill of Lading. AutoMove ensures clear communication and accessibility planning for a seamless start, ideal for busy professionals or relocations.</p>
+                <ul>
+                    <li><strong>Address Details:</strong> Provide GPS, landmarks, and access instructions.</li>
+                    <li><strong>Inspection:</strong> Document condition with carrier at your location.</li>
+                    <li><strong>Paperwork:</strong> Sign Bill of Lading to confirm vehicle condition.</li>
+                </ul>
+            `,
+            'transport-door': `
+                <h2>Tracking Door-to-Door</h2>
+                <p>During door-to-door transport, your vehicle travels to your specified delivery address, with AutoMove’s carriers providing updates via phone, email, or apps. Expect 4-10 days for delivery (e.g., 7 days for New York to Los Angeles), with adjustments for traffic, weather, or road conditions. Carriers coordinate accessibility, rerouting if needed for narrow streets or rural areas, ensuring your vehicle, like a family SUV, arrives safely with minimal hassle and clear communication throughout.</p>
+                <ul>
+                    <li><strong>Transit Time:</strong> 4-10 days, based on distance and accessibility.</li>
+                    <li><strong>Updates:</strong> Real-time tracking via calls, emails, or mobile apps.</li>
+                    <li><strong>Flexibility:</strong> Carriers adjust for access challenges or delays.</li>
+                </ul>
+            `,
+            'delivery-door': `
+                <h2>Delivery for Door-to-Door</h2>
+                <p>At door-to-door delivery, the carrier unloads your vehicle at your specified address, conducting a final inspection with you present to verify condition against the Bill of Lading. Check for new damage, like scuffs or dirt, under good lighting, and sign only after confirming satisfaction. AutoMove’s carriers address concerns immediately, with photos/videos supporting any claims. For example, a delivery to a Dallas suburb ensures easy access and a thorough check for your peace of mind.</p>
+                <ul>
+                    <li><strong>Inspection:</strong> Verify condition with carrier at delivery site.</li>
+                    <li><strong>Documentation:</strong> Take photos/videos if issues are found for claims.</li>
+                    <li><strong>Resolution:</strong> Discuss any concerns with the driver before signing.</li>
+                </ul>
+            `,
+            'booking-terminal': `
+                <h2>Booking and Pickup for Terminal-to-Terminal</h2>
+                <p>Book terminal-to-terminal with AutoMove, providing vehicle details and preferred drop-off dates at a hub like Chicago or Miami. Arrange transport to the terminal (e.g., rental car or ride-share), and the carrier inspects your vehicle, issuing a Bill of Lading to document condition. AutoMove ensures clear terminal instructions and schedules, minimizing delays for budget-conscious shippers. Confirm hours and parking to streamline the process, ideal for a cost-effective move.</p>
+                <ul>
+                    <li><strong>Booking:</strong> Specify vehicle details and drop-off timing.</li>
+                    <li><strong>Logistics:</strong> Arrange reliable transport to the terminal.</li>
+                    <li><strong>Paperwork:</strong> Sign Bill of Lading after thorough inspection.</li>
+                </ul>
+            `,
+            'transport-terminal': `
+                <h2>Tracking Terminal-to-Terminal</h2>
+                <p>Your vehicle travels to the destination terminal on an open trailer, covering 500+ miles daily, with AutoMove providing tracking via online portals, calls, or texts. Expect 4-10 days for a 2,000-mile trip like Phoenix to Atlanta, depending on terminal schedules and route conditions. Plan pickup to avoid storage fees ($10-$50/day), and stay updated on progress to coordinate logistics, ensuring a budget-friendly and efficient process with secure terminal storage.</p>
+                <ul>
+                    <li><strong>Transit Time:</strong> 4-10 days, based on distance and terminal logistics.</li>
+                    <li><strong>Tracking:</strong> Monitor via carrier portals or direct communication.</li>
+                    <li><strong>Storage:</strong> Pick up promptly to avoid additional fees.</li>
+                </ul>
+            `,
+            'delivery-terminal': `
+                <h2>Delivery for Terminal-to-Terminal</h2>
+                <p>Pick up your vehicle at the destination terminal, inspecting it with staff against the Bill of Lading for new damage like dents or scratches. AutoMove ensures secure terminals with gated lots, but check under good lighting and document issues with photos/videos. Sign the document after confirming condition, and address discrepancies with the terminal manager for quick resolution, ensuring a cost-effective delivery for your budget move.</p>
+                <ul>
+                    <li><strong>Inspection:</strong> Check condition thoroughly at the terminal.</li>
+                    <li><strong>Documentation:</strong> Use photos/videos for any damage claims.</li>
+                    <li><strong>Resolution:</strong> Discuss issues with terminal staff before signing.</li>
+                </ul>
+            `,
+            'legal-open': `
+                <h2>Legal and Insurance for Open Transport</h2>
+                <p>Open transport includes basic insurance ($5,000-$10,000 coverage), but AutoMove ensures USDOT-compliant carriers meet federal standards. Verify the carrier’s USDOT/MC numbers on the FMCSA website, and review policy details for exclusions (e.g., personal items). Consider gap insurance for older or sentimental vehicles like a family minivan. File claims promptly with photos, videos, and the Bill of Lading if damage occurs, ensuring quick resolution for minor issues like scratches from a Chicago to Houston trip.</p>
+                <ul>
+                    <li><strong>Compliance:</strong> Check USDOT/MC numbers for legal standards.</li>
+                    <li><strong>Insurance:</strong> Review coverage limits and exclusions in writing.</li>
+                    <li><strong>Claims:</strong> File within 24 hours with detailed damage evidence.</li>
+                </ul>
+            `,
+            'legal-enclosed': `
+                <h2>Legal and Insurance for Enclosed Transport</h2>
+                <p>Enclosed transport offers higher insurance ($50,000-$500,000) for luxury or classic cars, covering weather, theft, or handling risks. AutoMove’s carriers comply with FMCSA standards, ensuring safety and accountability. Confirm coverage matches your vehicle’s appraised value (e.g., a $200,000 Ferrari), and document condition with high-resolution photos/videos. File claims immediately with detailed evidence for quick resolution, protecting your investment during long hauls like Miami to Seattle.</p>
+                <ul>
+                    <li><strong>High-Value Coverage:</strong> Ensure insurance matches appraised value.</li>
+                    <li><strong>Compliance:</strong> Verify FMCSA standards for carrier reliability.</li>
+                    <li><strong>Claims:</strong> Use video/photo evidence for prompt dispute resolution.</li>
+                </ul>
+            `,
+            'legal-door': `
+                <h2>Legal and Insurance for Door-to-Door</h2>
+                <p>Door-to-door transport includes full-trip insurance, covering loading, transit, and unloading. AutoMove ensures USDOT-compliant carriers with transparent claim processes for issues like weather delays or handling errors. Verify coverage for all phases, especially in challenging areas like rural Montana, and check FMCSA compliance. Document condition with photos/videos for claims, filing promptly if damage occurs during a delivery to a busy urban area like San Francisco.</p>
+                <ul>
+                    <li><strong>Full Coverage:</strong> Confirm insurance for all transport phases.</li>
+                    <li><strong>Compliance:</strong> Check USDOT for legal and safety adherence.</li>
+                    <li><strong>Claims:</strong> File with detailed evidence, including timestamps.</li>
+                </ul>
+            `,
+            'legal-terminal': `
+                <h2>Legal and Insurance for Terminal-to-Terminal</h2>
+                <p>Terminal-to-terminal includes standard insurance ($5,000-$10,000), covering transit between hubs. AutoMove verifies FMCSA compliance and recommends documenting your vehicle’s condition at drop-off with photos/videos to support claims, especially in busy terminals like Los Angeles. Review coverage for storage periods, and file claims promptly with evidence if issues arise, ensuring cost-effective shipping with secure terminal handling for budget moves like Miami to Atlanta.</p>
+                <ul>
+                    <li><strong>Coverage Scope:</strong> Check insurance for transit and storage.</li>
+                    <li><strong>Compliance:</strong> Verify FMCSA standards for accountability.</li>
+                    <li><strong>Claims:</strong> Document condition for quick resolution of disputes.</li>
+                </ul>
+            `,
+            'tip-open': `
+                <h2>Tips for Open Transport</h2>
+                <p>Book open transport 2-4 weeks early to secure competitive rates ($500-$1,500) and avoid peak-season surcharges (summer/holidays). Request top-load placement to minimize debris damage, especially on highways like I-95. AutoMove provides tracking apps and regular updates for routes like Denver to Houston. Choose carriers with 4.5+ star ratings on BBB or Trustpilot, and confirm USDOT compliance for reliability, ensuring a smooth, budget-friendly experience for your standard vehicle.</p>
+                <ul>
+                    <li><strong>Early Booking:</strong> Schedule 2-4 weeks ahead for better rates.</li>
+                    <li><strong>Top-Load:</strong> Request to reduce exposure to road debris.</li>
+                    <li><strong>Tracking:</strong> Use carrier apps or calls for real-time updates.</li>
+                </ul>
+            `,
+            'tip-enclosed': `
+                <h2>Tips for Enclosed Transport</h2>
+                <p>For enclosed transport, book 6-8 weeks early for high-demand periods like auto shows, securing a spot for your luxury or classic car. Verify carrier expertise with testimonials and certifications, ensuring padded loading and climate control for vehicles like a 1965 Mustang. AutoMove offers GPS tracking and high-value insurance ($50,000-$500,000). Confirm contract terms in writing, and check reviews (4.7+ stars) for reliability on long routes like Los Angeles to New York.</p>
+                <ul>
+                    <li><strong>Advance Booking:</strong> Reserve early for limited trailer spots.</li>
+                    <li><strong>Carrier Expertise:</strong> Check credentials and luxury handling history.</li>
+                    <li><strong>Insurance:</strong> Ensure coverage matches vehicle value.</li>
+                </ul>
+            `,
+            'tip-door': `
+                <h2>Tips for Door-to-Door</h2>
+                <p>For door-to-door, provide precise address details (GPS, gate codes, landmarks) and clear pathways for trailers (e.g., no low branches). AutoMove coordinates access for urban or rural deliveries, like a San Francisco home or Montana farm. Offer alternative nearby locations if access is limited, and stay in touch via phone or app for updates. Plan flexible delivery windows to handle delays, ensuring a hassle-free experience with clear communication.</p>
+                <ul>
+                    <li><strong>Access Prep:</strong> Clear pathways and provide detailed directions.</li>
+                    <li><strong>Alternative Sites:</strong> Suggest nearby locations if needed.</li>
+                    <li><strong>Communication:</strong> Stay updated via carrier apps or calls.</li>
+                </ul>
+            `,
+            'tip-terminal': `
+                <h2>Tips for Terminal-to-Terminal</h2>
+                <p>Plan terminal-to-terminal logistics by arranging transport to hubs (e.g., Uber to a Chicago terminal) and confirming hours/parking. AutoMove provides secure terminals with gated lots, but pick up promptly to avoid storage fees ($10-$50/day). Document vehicle condition with photos/videos for claims, and choose carriers with 4.5+ star ratings for efficiency. Ideal for budget moves like Miami to Atlanta, ensuring cost savings with proper planning.</p>
+                <ul>
+                    <li><strong>Logistics:</strong> Arrange reliable transport to/from terminals.</li>
+                    <li><strong>Pickup Timing:</strong> Avoid fees by picking up promptly.</li>
+                    <li><strong>Security:</strong> Confirm gated lots and surveillance at terminals.</li>
+                </ul>
+            `,
+            'special-open': `
+                <h2>Special Considerations for Open Transport</h2>
+                <p>Open transport suits standard vehicles like sedans or SUVs but requires consideration for weather exposure (e.g., rain in Florida or snow in Colorado) and minor debris risks on highways. AutoMove recommends top-load placement and weather checks for routes like Denver to Phoenix. Choose durable vehicles where slight cosmetic wear is acceptable, and confirm carrier safety ratings (4.5+ stars) and USDOT compliance for reliability, ensuring a cost-effective move with minimal risks.</p>
+                <ul>
+                    <li><strong>Weather Prep:</strong> Monitor forecasts to anticipate exposure risks.</li>
+                    <li><strong>Top-Load:</strong> Request to minimize debris damage on highways.</li>
+                    <li><strong>Vehicle Suitability:</strong> Choose cars tolerant of minor wear.</li>
+                </ul>
+            `,
+            'special-enclosed': `
+                <h2>Special Considerations for Enclosed Transport</h2>
+                <p>Enclosed transport is ideal for high-value vehicles like classic Mustangs or luxury Ferraris, offering protection from weather, debris, and theft. AutoMove ensures climate-controlled trailers and high-value insurance ($50,000-$500,000). Book 6-8 weeks early for peak seasons (e.g., auto shows), and verify carrier expertise with certifications. For long routes like Miami to Seattle, confirm padded loading and GPS tracking for peace of mind, protecting your investment fully.</p>
+                <ul>
+                    <li><strong>Climate Control:</strong> Ensure trailers protect sensitive finishes.</li>
+                    <li><strong>Insurance:</strong> Match coverage to appraised vehicle value.</li>
+                    <li><strong>Booking:</strong> Reserve early for limited trailer availability.</li>
+                </ul>
+            `,
+            'special-door': `
+                <h2>Special Considerations for Door-to-Door</h2>
+                <p>Door-to-door works best in accessible urban/suburban areas (e.g., Dallas suburbs) but may need alternative sites for rural or narrow locations like a Montana farm. AutoMove coordinates access, requiring photos, GPS, and gate codes. Plan for seasonal challenges (e.g., snow or floods), and confirm trailer accessibility. Stay in touch for updates, ensuring a convenient delivery with minimal delays for your vehicle, like an SUV to a gated community.</p>
+                <ul>
+                    <li><strong>Access Planning:</strong> Provide detailed directions and clear pathways.</li>
+                    <li><strong>Seasonal Prep:</strong> Anticipate weather-related delays or access issues.</li>
+                    <li><strong>Alternative Sites:</strong> Offer nearby locations for inaccessible areas.</li>
+                </ul>
+            `,
+            'special-terminal': `
+                <h2>Special Considerations for Terminal-to-Terminal</h2>
+                <p>Terminal-to-terminal saves costs but requires proximity to hubs (within 50 miles) and logistical planning for drop-off/pickup. AutoMove’s terminals offer gated lots and surveillance, but confirm hours and security. Avoid storage fees ($10-$50/day) by picking up promptly, and document vehicle condition for claims. Ideal for budget moves like Los Angeles to Chicago, this option suits those near hubs with flexible schedules.</p>
+                <ul>
+                    <li><strong>Proximity:</strong> Ensure terminals are within reasonable distance.</li>
+                    <li><strong>Security:</strong> Verify gated lots and cameras for safe storage.</li>
+                    <li><strong>Fees:</strong> Pick up promptly to avoid extra storage costs.</li>
+                </ul>
+            `,
+            'faq-open': `
+                <h2>FAQs for Open Transport</h2>
+                <p>Open transport is safe with reputable carriers, offering cost-effective shipping ($500-$1,500) for standard vehicles, with 4-10 day transit times (e.g., 5 days for Chicago to Atlanta). Exposure to weather or debris may cause minor scratches, so choose durable cars. AutoMove ensures USDOT compliance and top-load options. Common questions: Can I leave items in the car? No, due to insurance exclusions. How to handle damage? File claims within 24 hours with photos/videos. Is it reliable? Yes, with 4.5+ star carriers.</p>
+                <ul>
+                    <li><strong>Safety:</strong> Reliable with vetted carriers and secure loading.</li>
+                    <li><strong>Items:</strong> Remove all personal belongings for safety and insurance.</li>
+                    <li><strong>Claims:</strong> File promptly with detailed damage documentation.</li>
+                </ul>
+            `,
+            'faq-enclosed': `
+                <h2>FAQs for Enclosed Transport</h2>
+                <p>Enclosed transport protects high-value vehicles with higher insurance ($50,000-$500,000) and 5-12 day transit times due to limited trailers. AutoMove offers climate control and GPS tracking for cars like Ferraris. Common questions: Why choose enclosed? For protection from weather/theft. How much more? 30-50% higher than open. How to book? Reserve 6-8 weeks early for availability, especially for auto shows or long routes like Los Angeles to New York. Perfect for irreplaceable vehicles.</p>
+                <ul>
+                    <li><strong>Purpose:</strong> Protects luxury/classics from damage and theft.</li>
+                    <li><strong>Cost:</strong> 30-50% more than open, $1,200-$2,000.</li>
+                    <li><strong>Booking:</strong> Plan early for limited trailer spots.</li>
+                </ul>
+            `,
+            'faq-door': `
+                <h2>FAQs for Door-to-Door</h2>
+                <p>Door-to-door offers convenience, with carriers adjusting for inaccessible areas (e.g., rural Montana) by using nearby drop-off points. Costs add $100-$300, with 4-10 day transit times. AutoMove ensures full-trip insurance and clear updates. Common questions: Can rural areas be serviced? Yes, with alternative sites. What if unavailable? Reschedule or use a proxy. Is it insured? Yes, covering all phases. Ideal for urban deliveries like Manhattan with precise coordination.</p>
+                <ul>
+                    <li><strong>Accessibility:</strong> Alternative sites for challenging locations.</li>
+                    <li><strong>Availability:</strong> Reschedule or assign a contact for delivery.</li>
+                    <li><strong>Insurance:</strong> Full coverage for pickup, transit, and delivery.</li>
+                </ul>
+            `,
+            'faq-terminal': `
+                <h2>FAQs for Terminal-to-Terminal</h2>
+                <p>Terminal-to-terminal saves up to $200, with 4-10 day transit times and secure hubs in cities like Miami or Seattle. AutoMove ensures gated terminals, but plan logistics to avoid storage fees ($10-$50/day). Common questions: Are terminals secure? Yes, with cameras and fencing. How to find terminals? Check carrier websites. How to avoid fees? Pick up promptly. Ideal for budget shippers near hubs with flexible schedules for cost-effective moves.</p>
+                <ul>
+                    <li><strong>Security:</strong> Gated lots and surveillance ensure safety.</li>
+                    <li><strong>Locations:</strong> Find terminals via carrier websites or support.</li>
+                    <li><strong>Fees:</strong> Avoid storage costs with timely pickup.</li>
+                </ul>
+            `
+        };
+
+        if (contentMap[filterType]) {
+            popupContent.innerHTML = contentMap[filterType];
+            popup.classList.add('open');
+        } else {
+            popupContent.innerHTML = '<h2>Error</h2><p>Content not found for this selection.</p>';
+            popup.classList.add('open');
+        }
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('contentPopup');
+        popup.classList.remove('open');
+    }
+
+    // Smooth scrolling for sidebar navigation
+    document.querySelectorAll('.sidebar a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - clamp(100, 15, 180),
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Utility function for clamp (used in CSS and JS for consistency)
+    function clamp(min, vw, max) {
+        const vwValue = window.innerWidth * (vw / 100);
+        return Math.max(min, Math.min(max, vwValue));
+    }
+</script>
 </body>
 </html>
